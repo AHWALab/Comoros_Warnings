@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flood potential warnings. Union of the Comoros</title>
+<meta name="description" content="Flood potential warning product with uncertainty quantification for the Comoros: ensemble unit streamflow zones, likelihood by impact matrix, rainfall analysis and forecast layers, hindcasts of April 2024 and May 2025.">
+<link rel="alternate" hreflang="fr" href="../fr/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 12l4-7 3 4 2-2 3 5z' fill='%23F4802A'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/css/leaflet.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="site-head"><div class="wrap head-row">
+  <div><h1>Flood potential warnings with uncertainty quantification</h1><p class="head-sub">Union of the Comoros: Grande Comore, Anjouan and Moheli</p></div>
+  <div class="head-meta"><span>Hindcasts of 26 to 28 April 2024 (72 cycles) and 4 to 7 May 2025 (96 cycles)</span><span>EF5 at 30 m, 50 StormLab members and 10 STREAM-Sat analysis members per cycle</span>
+    <span class="lang-switch"><a href="../">Home</a><a href="../fr/" onclick="location.href='../fr/'+location.hash;return false;">Fran&ccedil;ais</a></span></div>
+</div></header>
+
+<div class="context-band"><div class="wrap">Flood potential zones from the ensemble maximum unit streamflow of EF5 (m3/s per km2): View A shows the hazard alone, View B crosses the ensemble likelihood with the exposure of the built-up areas. Two band sets: the FLASH set (0.5, 1, 2, 4) for comparability with the Guatemala product, and a steep island set (2, 4, 6, 10) that keeps the pattern readable on the volcanic islands. Raster layers add the probability, the rainfall analysis and forecast, and the ensemble percentiles of the featured cycles.</div></div>
+
+<div class="wrap">
+  <section class="controls">
+    <div class="ctl-group"><span class="ctl-label">Event</span>
+      <div class="seg" id="seg-event"><button data-e="apr2024" class="on">26 to 28 April 2024</button><button data-e="may2025">4 to 7 May 2025</button></div></div>
+    <div class="ctl-group"><span class="ctl-label">Cycle</span>
+      <button class="step" id="prev">&lt;</button><select id="cycsel"></select><button class="step" id="next">&gt;</button><button class="toggle" id="play">Play</button></div>
+    <div class="ctl-group"><span class="ctl-label">View</span>
+      <div class="seg" id="seg-view"><button data-v="A" class="on">A hazard</button><button data-v="B">B impact adjusted</button></div>
+      <div class="seg" id="seg-set"><button data-s="flash" class="on">FLASH bands</button><button data-s="steep">Steep island bands</button></div></div>
+    <div class="ctl-group"><span class="ctl-label">Raster</span>
+      <select id="rassel">
+        <option value="cls">Potential class, FLASH bands (p90)</option>
+        <option value="clsS">Potential class, steep bands (p90)</option>
+        <option value="p1">Probability of UQ over 1 m3/s/km2</option>
+        <option value="qpe">Rain analysis, cumulative QPE to the cycle</option>
+        <option value="fc">Rain forecast, 24 h median</option>
+        <option value="p05">EF5 unit streamflow p05 (featured cycles)</option>
+        <option value="p50">EF5 unit streamflow median (featured cycles)</option>
+        <option value="p95">EF5 unit streamflow p95 (featured cycles)</option>
+        <option value="max">EF5 unit streamflow member maximum (featured cycles)</option>
+        <option value="ssmed">Analysis unit streamflow, STREAM-Sat median (featured cycles)</option>
+        <option value="ssmax">Analysis unit streamflow, STREAM-Sat maximum (featured cycles)</option>
+        <option value="qpemax">QPE event maximum unit streamflow (whole event)</option>
+        <option value="qpetot">QPE event rainfall total (whole event)</option>
+        <option value="none">No raster</option>
+      </select></div>
+    <div class="ctl-group"><span class="ctl-label">Layers</span>
+      <button class="toggle on" id="t-zones">Zones</button><button class="toggle" id="t-verif">QPE verification zones</button><button class="toggle on" id="t-rep">Reported impacts</button><button class="toggle on" id="t-adm">Communes</button></div>
+    <div class="ctl-group"><span class="ctl-label">Zoom</span>
+      <div class="seg" id="seg-island"><button data-i="all">Country</button><button data-i="grande">Grande Comore</button><button data-i="anjouan">Anjouan</button><button data-i="moheli">Moheli</button></div></div>
+    <div class="ctl-group"><span class="ctl-label">Basemap</span>
+      <div class="seg" id="seg-base"><button data-b="voyager">Street</button><button data-b="positron" class="on">Light</button><button data-b="sat">Satellite</button></div></div>
+  </section>
+
+  <main class="main">
+    <div class="map-col">
+      <div class="mapbox"><div id="map"></div></div>
+      <div class="map-caption">Zones are ranked by class, confidence and area; a dashed border marks low confidence (5 to 20 percent of members above the first band). The zoom buttons also select the island of the rainfall chart. Cycles marked * carry the ensemble percentile rasters. The basemap needs a connection; the product layers work offline.</div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <aside class="side">
+      <div class="cyc-head"><h2 id="cyctitle"></h2></div>
+      <div class="warnbox" id="featnote" style="display:none">Featured cycle: the EF5 percentile rasters of the 50 members and of the 10 analysis members are available in the raster menu.</div>
+      <table class="st" id="isltable"></table>
+      <p class="note">Columns: cumulative QPE analysis to the cycle (last hour) in mm, island mean; 24 h forecast rain median (p05 to p95) in mm, island mean; area with p90 unit streamflow above the second band, km2; worst zone class or level; population in View B zones at Moderate or worse.</p>
+      <dl class="kv" id="kv"></dl>
+      <div class="tl-head"><h3 id="zonecount"></h3></div>
+      <div class="tblwrap"><table class="st" id="zonetable"></table></div>
+      <p class="note">Zones: cells where at least 3 of 50 members exceed the first band, closed and opened morphologically, 8 connected, at least 0.32 km2, holes filled. Class: highest band reached by the 90th percentile of the members inside the zone (the median and the worst member are in the popup). View B: likelihood tier (5, 20, 50 percent) crossed with impact, where impact is the potential class raised by one where the built density is in the upper tercile or a facility lies within 500 m, and lowered by one where no building lies nearby. Population, buildings and facilities inside each zone come from the Overture Maps receptor base with the 2017 census allocation. Confidence * = low. Use the arrow keys to step through cycles.</p>
+    </aside>
+  </main>
+
+  <section class="timeline">
+    <div class="tl-head"><h3>Rainfall, island mean</h3><span class="tl-key"><i class="k-bar"></i>observed hourly QPE (median member) <i class="k-line"></i>24 h forecast rain, median <i class="k-band"></i>p05 to p95 <i class="k-dash"></i>cumulative QPE <i class="k-cur"></i>selected cycle</span></div>
+    <div class="stripwrap" id="chart1"></div>
+    <div class="tl-cap">mm. Bars scale to the largest hourly value of the event. The cumulative QPE starts with the antecedent rain of the model warm-up window, carried by the first cycle (29 mm on Grande Comore on 26 April 2024 00:00, 4 mm on 4 May 2025 00:00), whose hourly bar is not drawn. Times are UTC. Click on a chart to jump to that cycle.</div>
+    <div class="tl-head"><h3>Flood potential extent</h3><span class="tl-key"><i class="k-line" style="background:#1b4f72"></i>Grande Comore <i class="k-line" style="background:#c0392b"></i>Anjouan <i class="k-line" style="background:#1e8449"></i>Moheli</span></div>
+    <div class="stripwrap" id="chart2"></div>
+    <div class="tl-cap" id="chart2cap"></div>
+  </section>
+</div>
+
+<footer class="site-foot"><div class="wrap foot-row">
+  <div><strong>AHWA Laboratory, The University of Iowa</strong><br>EWS-F project, funded by the WMO</div><div class="foot-right">Produced with TITO, EF5, StormLab and STREAM-Sat.<br>Hindcast demonstration. Flood potential, not an official warning: issuing warnings remains the mandate of the national institutions.</div>
+</div></footer>
+
+<script>
+window.WARN_BASE = "../";
+window.WARN_STRINGS = {
+  locale: "en-US",
+  fixLabel: function (l) { return l; },
+  fixName: function (n) { return n.normalize("NFD").replace(/[\u0300-\u036f]/g, ""); },
+  dayLabel: function (c) { return parseInt(c.slice(6, 8), 10) + " " + ({ "04": "April", "05": "May" }[c.slice(4, 6)]); },
+  islandNames: { grande: "Grande Comore", anjouan: "Anjouan", moheli: "Moheli" },
+  clsNames: { 0: "Minimal", 1: "Low", 2: "Moderate", 3: "High", 4: "Very high" }, noZone: "No zone",
+  lvlNames: { 0: "None", 1: "Low", 2: "Moderate", 3: "High", 4: "Very high" },
+  confNames: { 1: "low, 5 to 20 percent", 2: "medium, 20 to 50 percent", 3: "high, 50 percent or more" },
+  bandEdges: { flash: [0.5, 1, 2, 4], steep: [2, 4, 6, 10] },
+  bandNames: { flash: { 0: "under 0.5", 1: "0.5 to 1", 2: "1 to 2", 3: "2 to 4", 4: "4 and up" }, steep: { 0: "under 2", 1: "2 to 4", 2: "4 to 6", 3: "6 to 10", 4: "10 and up" } },
+  rasterNames: { cls: "Potential class, FLASH bands, p90 (m3/s/km2)", clsS: "Potential class, steep bands, p90 (m3/s/km2)", p1: "Probability of UQ over 1 m3/s/km2", qpe: "Cumulative QPE analysis, mm", fc: "24 h forecast rain, median, mm", p05: "EF5 unit streamflow p05", p50: "EF5 unit streamflow median", p95: "EF5 unit streamflow p95", max: "EF5 unit streamflow member maximum", ssmed: "Analysis unit streamflow, STREAM-Sat median", ssmax: "Analysis unit streamflow, STREAM-Sat maximum", qpemax: "QPE event maximum unit streamflow", qpetot: "QPE event rainfall total, mm" },
+  legA: "View A, flood potential class (p90 of the members)", legB: "View B, warning level (likelihood by impact)", legConfLow: "low confidence zone",
+  zoneWord: "Zone", zonesWord: "zones", first40: "first 40 listed", verifZone: "QPE verification zone", areaWord: "Area", confWord: "confidence", bandWord: "Band", medianWord: "median", worstWord: "worst member", uqMedMax: "Max unit streamflow (median member)",
+  popWord: "Population", bldWord: "buildings", facWord: "facilities", roadWord: "main roads", communesWord: "Communes", reportsWord: "Reported impacts inside",
+  tblLevel: "Level", tblArea: "km2", tblPop: "People", tblCommunes: "Communes", tblIsland: "Island", tblQpe: "QPE mm (1 h)", tblFc: "Forecast mm", tblKm2: "km2", tblMax: "Worst", tblPopB: "People B",
+  kvZonesA: "View A zones", kvZonesB: "View B zones", kvPopB: "People in B zones (very high / high / moderate / low)", kvKm2: "Area by p90 class", kvMaxP: "Max probability of the first band",
+  cycleWord: "Cycle", chart2cap: function (b) { return "km2 of land where the 90th percentile of the members exceeds " + b + " m3/s/km2, per island. Times are UTC."; },
+  reportedImpact: "Reported impact", toWord: "to", scaleWord: "Scale", infraWord: "Infrastructure", reportSource: "SIDS Flash Flood Compendium",
+  play: "Play", pause: "Pause"
+};
+</script>
+<script src="../assets/js/leaflet.js"></script>
+<script src="../assets/data/grid.js"></script>
+<script src="../assets/data/communes.js"></script>
+<script src="../assets/data/reports.js"></script>
+<script src="../assets/data/series_apr2024.js"></script>
+<script src="../assets/data/series_may2025.js"></script>
+<script src="../assets/data/verif_apr2024.js"></script>
+<script src="../assets/data/verif_may2025.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>

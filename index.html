@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alertes Comores / Comoros Warnings</title>
+<meta name="description" content="Produit d'alerte de potentiel d'inondation avec quantification de l'incertitude pour l'Union des Comores. Choix de la langue. Flood potential warning product for the Union of the Comoros, language choice.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 12l4-7 3 4 2-2 3 5z' fill='%23F4802A'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.land{max-width:900px;margin:0 auto;padding:44px 18px 60px}
+.land h1{font-size:26px;font-weight:600;margin-bottom:6px}
+.land .sub{color:var(--mute);margin:0 0 26px;font-size:15px}
+.cards{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:32px}
+.card{flex:1 1 300px;border:1px solid var(--line);border-radius:6px;padding:20px;text-decoration:none;color:inherit;background:#fff}
+.card:hover{border-color:var(--brand);box-shadow:0 2px 10px rgba(27,39,51,.07)}
+.card h2{font-size:17px;font-weight:600;margin-bottom:6px;color:var(--brandv)}
+.card p{margin:0;font-size:13.5px;color:var(--mute);line-height:1.55}
+.facts{border:1px solid var(--line);border-radius:6px;padding:18px 20px;background:var(--panel);font-size:13.5px;margin-bottom:18px}
+.facts h3{font-size:14px;margin-bottom:8px}
+.facts dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin:0}
+.facts dt{color:var(--mute)}
+.facts dd{margin:0}
+.links{font-size:13.5px;color:var(--mute)}
+</style>
+</head>
+<body>
+<header class="site-head"><div class="wrap head-row">
+  <div><h1>Alertes Comores / Comoros Warnings</h1><p class="head-sub">Grande Comore, Anjouan, Mohéli</p></div>
+  <div class="head-meta"><span>AHWA Laboratory, University of Iowa</span><span>EWS-F, WMO</span></div>
+</div></header>
+
+<div class="land">
+  <h1>Potentiel d'inondation avec quantification de l'incertitude / Flood potential with uncertainty quantification</h1>
+  <p class="sub">Zones de potentiel d'inondation, vue aléa et vue ajustée à l'impact, couches de pluie et de débit unitaire d'ensemble, rétro-prévisions du 26 au 28 avril 2024 et du 4 au 7 mai 2025.<br>
+    Flood potential zones, hazard and impact adjusted views, rainfall and ensemble unit streamflow layers, hindcasts of 26 to 28 April 2024 and 4 to 7 May 2025.</p>
+
+  <div class="cards">
+    <a class="card" href="fr/"><h2>Français</h2><p>Zones par cycle (168 cycles), deux jeux de bandes, rasters de probabilité, de pluie analysée et prévue, percentiles EF5 des cycles mis en avant, zones de vérification QPE, graphiques par île.</p></a>
+    <a class="card" href="en/"><h2>English</h2><p>Zones per cycle (168 cycles), two band sets, probability, rainfall analysis and forecast rasters, EF5 percentiles of the featured cycles, QPE verification zones, charts per island.</p></a>
+  </div>
+
+  <div class="facts">
+    <h3>Le produit en bref / The product in brief</h3>
+    <dl>
+      <dt>Modèle / Model</dt><dd>EF5 CREST à 30 m sur les trois îles, chaîne TITO. EF5 CREST at 30 m over the three islands, TITO chain.</dd>
+      <dt>Ensemble</dt><dd>50 membres StormLab par cycle (10 analyses STREAM-Sat x 5 réalisations, 24 h de pluie), 10 membres d'analyse STREAM-Sat. 50 StormLab members per cycle, 10 STREAM-Sat analysis members.</dd>
+      <dt>Bandes / Bands</dt><dd>FLASH 0,5 / 1 / 2 / 4 m3/s/km2 et îles escarpées 2 / 4 / 6 / 10 m3/s/km2. FLASH 0.5 / 1 / 2 / 4 and steep islands 2 / 4 / 6 / 10 m3/s/km2.</dd>
+      <dt>Exposition / Exposure</dt><dd>Overture Maps (bâtiments, routes), OpenStreetMap et Overture (équipements), recensement 2017 par île. Overture Maps buildings and roads, OSM and Overture facilities, 2017 census by island.</dd>
+      <dt>Vérification / Verification</dt><dd>Débit unitaire maximal de l'analyse STREAM-Sat sur tout l'événement et impacts rapportés du SIDS Flash Flood Compendium. STREAM-Sat analysis event maximum unit streamflow and reported impacts from the SIDS Flash Flood Compendium.</dd>
+    </dl>
+  </div>
+  <p class="links">Produits associés / Related products: <a href="https://ahwalab.github.io/Comoros_FIM/">Comoros_FIM</a> (flood inundation likelihood),
+    <a href="https://ahwalab.github.io/Comoros_IFB/">Comoros_IFB</a> (impact-based forecast).</p>
+</div>
+
+<footer class="site-foot"><div class="wrap foot-row">
+  <div><strong>AHWA Laboratory, The University of Iowa</strong><br>Projet EWS-F, financé par l'OMM / EWS-F project, funded by the WMO</div>
+  <div class="foot-right">Produit avec TITO, EF5, StormLab et STREAM-Sat. / Produced with TITO, EF5, StormLab and STREAM-Sat.<br>Démonstration en rétro-prévision. Potentiel d'inondation, pas une alerte officielle. / Hindcast demonstration. Flood potential, not an official warning.</div>
+</div></footer>
+</body>
+</html>

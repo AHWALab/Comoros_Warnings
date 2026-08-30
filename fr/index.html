@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alertes de potentiel d'inondation. Union des Comores</title>
+<meta name="description" content="Produit d'alerte de potentiel d'inondation avec quantification de l'incertitude pour les Comores : zones de débit unitaire d'ensemble, matrice vraisemblance par impact, couches d'analyse et de prévision de pluie, rétro-prévisions d'avril 2024 et de mai 2025.">
+<link rel="alternate" hreflang="fr" href="../fr/">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 12l4-7 3 4 2-2 3 5z' fill='%23F4802A'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../assets/css/leaflet.css">
+<link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+<header class="site-head"><div class="wrap head-row">
+  <div><h1>Alertes de potentiel d'inondation avec quantification de l'incertitude</h1><p class="head-sub">Union des Comores : Grande Comore, Anjouan et Mohéli</p></div>
+  <div class="head-meta"><span>Rétro-prévisions du 26 au 28 avril 2024 (72 cycles) et du 4 au 7 mai 2025 (96 cycles)</span><span>EF5 à 30 m, 50 membres StormLab et 10 membres d'analyse STREAM-Sat par cycle</span>
+    <span class="lang-switch"><a href="../">Accueil</a><a href="../en/" onclick="location.href='../en/'+location.hash;return false;">English</a></span></div>
+</div></header>
+
+<div class="context-band"><div class="wrap">Zones de potentiel d'inondation à partir du débit unitaire maximal d'ensemble d'EF5 (m3/s par km2) : la vue A montre l'aléa seul, la vue B croise la vraisemblance d'ensemble avec l'exposition des zones bâties. Deux jeux de bandes : le jeu FLASH (0,5, 1, 2, 4) pour la comparaison avec le produit du Guatemala, et un jeu « îles escarpées » (2, 4, 6, 10) qui garde le motif lisible sur les îles volcaniques. Les couches raster ajoutent la probabilité, l'analyse et la prévision de pluie, et les percentiles d'ensemble des cycles mis en avant.</div></div>
+
+<div class="wrap">
+  <section class="controls">
+    <div class="ctl-group"><span class="ctl-label">Événement</span>
+      <div class="seg" id="seg-event"><button data-e="apr2024" class="on">26 au 28 avril 2024</button><button data-e="may2025">4 au 7 mai 2025</button></div></div>
+    <div class="ctl-group"><span class="ctl-label">Cycle</span>
+      <button class="step" id="prev">&lt;</button><select id="cycsel"></select><button class="step" id="next">&gt;</button><button class="toggle" id="play">Lecture</button></div>
+    <div class="ctl-group"><span class="ctl-label">Vue</span>
+      <div class="seg" id="seg-view"><button data-v="A" class="on">A aléa</button><button data-v="B">B ajustée à l'impact</button></div>
+      <div class="seg" id="seg-set"><button data-s="flash" class="on">Bandes FLASH</button><button data-s="steep">Bandes îles escarpées</button></div></div>
+    <div class="ctl-group"><span class="ctl-label">Raster</span>
+      <select id="rassel">
+        <option value="cls">Classe de potentiel, bandes FLASH (p90)</option>
+        <option value="clsS">Classe de potentiel, bandes escarpées (p90)</option>
+        <option value="p1">Probabilité d'un débit unitaire de plus de 1 m3/s/km2</option>
+        <option value="qpe">Analyse de pluie, QPE cumulée jusqu'au cycle</option>
+        <option value="fc">Prévision de pluie, médiane 24 h</option>
+        <option value="p05">Débit unitaire EF5 p05 (cycles mis en avant)</option>
+        <option value="p50">Débit unitaire EF5 médiane (cycles mis en avant)</option>
+        <option value="p95">Débit unitaire EF5 p95 (cycles mis en avant)</option>
+        <option value="max">Débit unitaire EF5 maximum des membres (cycles mis en avant)</option>
+        <option value="ssmed">Débit unitaire d'analyse, médiane STREAM-Sat (cycles mis en avant)</option>
+        <option value="ssmax">Débit unitaire d'analyse, maximum STREAM-Sat (cycles mis en avant)</option>
+        <option value="qpemax">Débit unitaire maximal QPE (tout l'événement)</option>
+        <option value="qpetot">Cumul de pluie QPE (tout l'événement)</option>
+        <option value="none">Aucun raster</option>
+      </select></div>
+    <div class="ctl-group"><span class="ctl-label">Couches</span>
+      <button class="toggle on" id="t-zones">Zones</button><button class="toggle" id="t-verif">Zones de vérification QPE</button><button class="toggle on" id="t-rep">Impacts rapportés</button><button class="toggle on" id="t-adm">Communes</button></div>
+    <div class="ctl-group"><span class="ctl-label">Cadrage</span>
+      <div class="seg" id="seg-island"><button data-i="all">Pays</button><button data-i="grande">Grande Comore</button><button data-i="anjouan">Anjouan</button><button data-i="moheli">Mohéli</button></div></div>
+    <div class="ctl-group"><span class="ctl-label">Fond de carte</span>
+      <div class="seg" id="seg-base"><button data-b="voyager">Plan</button><button data-b="positron" class="on">Clair</button><button data-b="sat">Satellite</button></div></div>
+  </section>
+
+  <main class="main">
+    <div class="map-col">
+      <div class="mapbox"><div id="map"></div></div>
+      <div class="map-caption">Les zones sont classées par classe, confiance et surface ; un bord en pointillés marque une confiance faible (5 à 20 pour cent des membres au-dessus de la première bande). Les boutons de cadrage choisissent aussi l'île du graphique de pluie. Les cycles marqués * portent les rasters de percentiles d'ensemble. Le fond de carte nécessite une connexion ; les couches du produit fonctionnent hors ligne.</div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <aside class="side">
+      <div class="cyc-head"><h2 id="cyctitle"></h2></div>
+      <div class="warnbox" id="featnote" style="display:none">Cycle mis en avant : les rasters de percentiles EF5 des 50 membres et des 10 membres d'analyse sont disponibles dans le menu raster.</div>
+      <table class="st" id="isltable"></table>
+      <p class="note">Colonnes : analyse QPE cumulée jusqu'au cycle (dernière heure) en mm, moyenne de l'île ; médiane de la pluie prévue sur 24 h (p05 à p95) en mm, moyenne de l'île ; surface où le débit unitaire p90 dépasse la deuxième bande, km2 ; pire classe ou niveau de zone ; population des zones de la vue B au niveau modéré ou plus.</p>
+      <dl class="kv" id="kv"></dl>
+      <div class="tl-head"><h3 id="zonecount"></h3></div>
+      <div class="tblwrap"><table class="st" id="zonetable"></table></div>
+      <p class="note">Zones : cellules où au moins 3 des 50 membres dépassent la première bande, fermeture et ouverture morphologiques, connexité 8, au moins 0,32 km2, trous comblés. Classe : bande la plus haute atteinte par le 90e percentile des membres dans la zone (la médiane et le pire membre sont dans la fenêtre). Vue B : palier de vraisemblance (5, 20, 50 pour cent) croisé avec l'impact, où l'impact est la classe de potentiel relevée d'un cran quand la densité bâtie est dans le tercile supérieur ou qu'un équipement se trouve à moins de 500 m, et abaissée d'un cran quand aucun bâtiment n'est proche. Population, bâtiments et équipements dans chaque zone viennent de la base de récepteurs Overture Maps avec la répartition du recensement 2017. Confiance * = faible. Les flèches du clavier font défiler les cycles.</p>
+    </aside>
+  </main>
+
+  <section class="timeline">
+    <div class="tl-head"><h3>Pluie, moyenne de l'île</h3><span class="tl-key"><i class="k-bar"></i>QPE horaire observée (membre médian) <i class="k-line"></i>pluie prévue 24 h, médiane <i class="k-band"></i>p05 à p95 <i class="k-dash"></i>QPE cumulée <i class="k-cur"></i>cycle sélectionné</span></div>
+    <div class="stripwrap" id="chart1"></div>
+    <div class="tl-cap">mm. Les barres sont à l'échelle de la plus forte valeur horaire de l'événement. La QPE cumulée commence par la pluie antécédente de la fenêtre de mise en régime du modèle, portée par le premier cycle (29 mm sur la Grande Comore le 26 avril 2024 à 00:00, 4 mm le 4 mai 2025 à 00:00), dont la barre horaire n'est pas tracée. Heures en UTC. Cliquer sur un graphique pour aller à ce cycle.</div>
+    <div class="tl-head"><h3>Étendue du potentiel d'inondation</h3><span class="tl-key"><i class="k-line" style="background:#1b4f72"></i>Grande Comore <i class="k-line" style="background:#c0392b"></i>Anjouan <i class="k-line" style="background:#1e8449"></i>Mohéli</span></div>
+    <div class="stripwrap" id="chart2"></div>
+    <div class="tl-cap" id="chart2cap"></div>
+  </section>
+</div>
+
+<footer class="site-foot"><div class="wrap foot-row">
+  <div><strong>AHWA Laboratory, The University of Iowa</strong><br>Projet EWS-F, financé par l'OMM</div><div class="foot-right">Produit avec TITO, EF5, StormLab et STREAM-Sat.<br>Démonstration en rétro-prévision. Potentiel d'inondation, pas une alerte officielle : l'émission des alertes reste du ressort des institutions nationales.</div>
+</div></footer>
+
+<script>
+window.WARN_BASE = "../";
+window.WARN_STRINGS = {
+  locale: "fr-FR",
+  fixLabel: function (l) { return l.replace(" Apr ", " avr. ").replace(" May ", " mai "); },
+  fixName: function (n) { return n; },
+  dayLabel: function (c) { return parseInt(c.slice(6, 8), 10) + " " + ({ "04": "avril", "05": "mai" }[c.slice(4, 6)]); },
+  islandNames: { grande: "Grande Comore", anjouan: "Anjouan", moheli: "Mohéli" },
+  clsNames: { 0: "Minimal", 1: "Faible", 2: "Modéré", 3: "Élevé", 4: "Très élevé" }, noZone: "Aucune zone",
+  lvlNames: { 0: "Aucun", 1: "Faible", 2: "Modéré", 3: "Élevé", 4: "Très élevé" },
+  confNames: { 1: "faible, 5 à 20 pour cent", 2: "moyenne, 20 à 50 pour cent", 3: "élevée, 50 pour cent ou plus" },
+  bandEdges: { flash: [0.5, 1, 2, 4], steep: [2, 4, 6, 10] },
+  bandNames: { flash: { 0: "moins de 0,5", 1: "0,5 à 1", 2: "1 à 2", 3: "2 à 4", 4: "4 et plus" }, steep: { 0: "moins de 2", 1: "2 à 4", 2: "4 à 6", 3: "6 à 10", 4: "10 et plus" } },
+  rasterNames: { cls: "Classe de potentiel, bandes FLASH, p90 (m3/s/km2)", clsS: "Classe de potentiel, bandes escarpées, p90 (m3/s/km2)", p1: "Probabilité d'un débit unitaire de plus de 1 m3/s/km2", qpe: "Analyse QPE cumulée, mm", fc: "Pluie prévue 24 h, médiane, mm", p05: "Débit unitaire EF5 p05", p50: "Débit unitaire EF5 médiane", p95: "Débit unitaire EF5 p95", max: "Débit unitaire EF5 maximum des membres", ssmed: "Débit unitaire d'analyse, médiane STREAM-Sat", ssmax: "Débit unitaire d'analyse, maximum STREAM-Sat", qpemax: "Débit unitaire maximal QPE de l'événement", qpetot: "Cumul de pluie QPE de l'événement, mm" },
+  legA: "Vue A, classe de potentiel d'inondation (p90 des membres)", legB: "Vue B, niveau d'alerte (vraisemblance par impact)", legConfLow: "zone à confiance faible",
+  zoneWord: "Zone", zonesWord: "zones", first40: "40 premières listées", verifZone: "Zone de vérification QPE", areaWord: "Surface", confWord: "confiance", bandWord: "Bande", medianWord: "médiane", worstWord: "pire membre", uqMedMax: "Débit unitaire max (membre médian)",
+  popWord: "Population", bldWord: "bâtiments", facWord: "équipements", roadWord: "routes principales", communesWord: "Communes", reportsWord: "Impacts rapportés à l'intérieur",
+  tblLevel: "Niveau", tblArea: "km2", tblPop: "Personnes", tblCommunes: "Communes", tblIsland: "Île", tblQpe: "QPE mm (1 h)", tblFc: "Prévision mm", tblKm2: "km2", tblMax: "Pire", tblPopB: "Personnes B",
+  kvZonesA: "Zones vue A", kvZonesB: "Zones vue B", kvPopB: "Personnes dans les zones B (très élevé / élevé / modéré / faible)", kvKm2: "Surface par classe p90", kvMaxP: "Probabilité max de la première bande",
+  cycleWord: "Cycle du", chart2cap: function (b) { return "km2 de terres où le 90e percentile des membres dépasse " + b + " m3/s/km2, par île. Heures en UTC."; },
+  reportedImpact: "Impact rapporté", toWord: "au", scaleWord: "Échelle", infraWord: "Infrastructures", reportSource: "SIDS Flash Flood Compendium",
+  play: "Lecture", pause: "Pause"
+};
+</script>
+<script src="../assets/js/leaflet.js"></script>
+<script src="../assets/data/grid.js"></script>
+<script src="../assets/data/communes.js"></script>
+<script src="../assets/data/reports.js"></script>
+<script src="../assets/data/series_apr2024.js"></script>
+<script src="../assets/data/series_may2025.js"></script>
+<script src="../assets/data/verif_apr2024.js"></script>
+<script src="../assets/data/verif_may2025.js"></script>
+<script src="../assets/js/app.js"></script>
+</body>
+</html>
