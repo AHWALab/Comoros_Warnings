@@ -192,7 +192,7 @@ function chart() {
 
 /* ---------- controls ---------- */
 var sel = document.getElementById("cycsel");
-function fillSel() { sel.innerHTML = ""; cycles().forEach(function (c, i) { var o = document.createElement("option"); o.value = i; o.textContent = S.fixLabel(c.label) + (c.featured ? " *" : ""); sel.appendChild(o); }); }
+function fillSel() { sel.innerHTML = ""; cycles().forEach(function (c, i) { var o = document.createElement("option"); o.value = i; o.textContent = S.fixLabel(c.label) + (c.peak ? " *" : "") + (c.featured ? " +" : ""); sel.appendChild(o); }); }
 sel.addEventListener("change", function () { ci = +sel.value; draw(); });
 document.getElementById("prev").addEventListener("click", function () { ci = Math.max(0, ci - 1); draw(); });
 document.getElementById("next").addEventListener("click", function () { ci = Math.min(cycles().length - 1, ci + 1); draw(); });
@@ -215,6 +215,7 @@ function readHash() {
   var h = new URLSearchParams(location.hash.slice(1));
   if (h.get("e") && SER[h.get("e")]) { ev = h.get("e"); }
   if (h.get("c")) { cycles().forEach(function (c, i) { if (c.cycle === h.get("c")) { ci = i; } }); }
+  else { cycles().forEach(function (c, i) { if (c.peak) { ci = i; } }); }
   if (h.get("v") === "B") { view = "B"; }
   if (h.get("s") === "steep") { bset = "steep"; }
   if (h.get("r") && RASTERS[h.get("r")]) { raster = h.get("r"); }
